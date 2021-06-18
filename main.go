@@ -3,20 +3,25 @@ package main
 import(
 	"fmt"
 	"net/http"
-	"io"
-	"os"
+	"io/ioutil"
+	//"os"
 	"strconv"
 )
 
 func flux(a string) {
 	resp, err := http.Get("https://jsonplaceholder.typicode.com/posts/" + a) 
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("read1",err)
 		return
 	}
 	defer resp.Body.Close()
-	io.Copy(os.Stdout, resp.Body)
-	fmt.Println()
+	
+	n, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("read2", err)
+		return
+	}
+	ioutil.WriteFile("results/" + a + ".txt", n, 0777) 
 }
 
 func main() {
